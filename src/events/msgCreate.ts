@@ -1,5 +1,6 @@
 import { Event } from "../typings";
 import { client } from "..";
+import { sqlite } from "../utils";
 
 const MsgCreate: Event<"messageCreate"> = {
   name: "messageCreate",
@@ -10,6 +11,7 @@ const MsgCreate: Event<"messageCreate"> = {
     let cmd =
       client.msgCommands.get(cmdName) ||
       client.msgCommands.find(c => c.aliases && c.aliases.includes(cmdName));
+    let pl = await sqlite.checkDB(msg.author.id, msg.author.username, true);
     if (!cmd) return;
     try {
       await msg.channel.sendTyping();
@@ -17,8 +19,9 @@ const MsgCreate: Event<"messageCreate"> = {
         msg,
         args,
         client,
-        userID: msg.author.id,
+        authorID: msg.author.id,
         username: msg.author.username,
+        pl,
       });
     } catch (e) {
       console.warn(e);

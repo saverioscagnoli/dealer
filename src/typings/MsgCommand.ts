@@ -1,12 +1,14 @@
 import { Message } from "discord.js";
 import { DealerClient } from "./Client";
+import { Schema } from "./Schema";
 
 interface MsgCommandExeFunctionOptions {
   msg: Message;
   args: string[];
   client: DealerClient;
-  userID: string;
+  authorID: string;
   username: string;
+  pl: Schema;
 }
 
 type MsgCommandExeFunction = (opt: MsgCommandExeFunctionOptions) => any;

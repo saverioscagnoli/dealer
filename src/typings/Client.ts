@@ -1,4 +1,5 @@
 import { Client, Collection } from "discord.js";
+import { QuickDB } from "quick.db";
 import * as MsgCmdFiles from "../commands/msg";
 import * as EvtFiles from "../events";
 import { MsgCommand } from "./MsgCommand";
@@ -6,6 +7,7 @@ import { MsgCommand } from "./MsgCommand";
 class DealerClient extends Client {
   prefix: string = "deal ";
   msgCommands: Collection<string, MsgCommand> = new Collection();
+  db: QuickDB = new QuickDB({ filePath: "chips.sqlite" });
   constructor() {
     super({
       intents: [
