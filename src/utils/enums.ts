@@ -1,10 +1,12 @@
 enum EmbedAssets {
   ProPic = "https://i.imgur.com/p1ulCUK.png",
+  ProPicPixelArt = "https://i.imgur.com/UUifqzZ.png",
   Color = "#598338",
   CoinflipStill = "https://i.imgur.com/LvGKco9.png",
   CoinflipGif = "https://i.imgur.com/YB2Obak.gif",
   RouletteBets = "https://i.imgur.com/lQykYMb.jpg",
   RouletteSpinning = "https://i.imgur.com/oKSWTr2.gif",
+  CasinoTable = "https://i.imgur.com/DcUDQYA.jpg",
 }
 
 enum Emojis {
