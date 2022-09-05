@@ -3,6 +3,7 @@ import {
   ButtonStyle,
   ColorResolvable,
   EmbedBuilder,
+  User,
 } from "discord.js";
 import { EmbedAssets } from "./enums";
 
@@ -23,6 +24,13 @@ interface Button {
   disabled?: boolean;
 }
 
+interface Horse {
+  name: string;
+  id: string;
+  owner: User;
+  position: string[];
+}
+
 const misc = {
   Embed(o: Embed): EmbedBuilder {
     return new EmbedBuilder()
@@ -41,9 +49,19 @@ const misc = {
       .setStyle(o.style)
       .setDisabled(o.disabled ?? false);
   },
+  displayHorses(horses: Horse[]) {
+    return horses
+      .map(
+        ({ name, owner, position }) =>
+          `**${name}** - ${owner ?? "Nobody"}
+         ${position.join("")}
+         ----------------------------------------------------------------------🏁`
+      )
+      .join("\n");
+  },
 };
 
 function sleep(sec: number) {
   return new Promise(res => setTimeout(res, sec * 1000));
 }
-export { misc, sleep };
+export { misc, sleep, Horse };

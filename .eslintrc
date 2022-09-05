@@ -5,5 +5,10 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "rules": {}
+  "rules": {
+    "no-unused-vars": "error",
+    "strict": "error",
+    "capitalized-comments": "warn",
+    "semi": "error"
+  }
 }

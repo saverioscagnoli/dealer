@@ -46,7 +46,7 @@ const sqlite = {
     req: Message | ButtonInteraction | CommandInteraction,
     shouldBet = true
   ): Promise<boolean> {
-    if (!Number.isInteger(n) || n + n < 0) {
+    if (!Number.isInteger(n) || n + n <= 0) {
       let str = `**Please enter a valid bet!**`;
       if (req instanceof Message) {
         await req.reply(str);
