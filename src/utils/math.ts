@@ -12,6 +12,16 @@ const math = {
   pick(arr: any[]): any {
     return arr[Math.floor(Math.random() * arr.length)];
   },
+  shuffle(arr: any[]) {
+    let cIndex = arr.length,
+      rndIndex: number;
+    while (cIndex != 0) {
+      rndIndex = Math.floor(Math.random() * cIndex);
+      cIndex--;
+      [arr[cIndex], arr[rndIndex]] = [arr[rndIndex], arr[cIndex]];
+    }
+    return arr;
+  },
   randomID(): string {
     let pool =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";
