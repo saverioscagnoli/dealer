@@ -17,8 +17,8 @@ interface Embed {
   image?: string;
   color?: ColorResolvable;
   fields?: { name: string; value: string }[];
-  author?: { name: string; iconURL: string };
-  footer?: { text: string; iconURL: string };
+  author?: { name: string; iconURL?: string };
+  footer?: { text: string; iconURL?: string };
 }
 
 interface Button {
