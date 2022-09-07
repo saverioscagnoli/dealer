@@ -110,28 +110,28 @@ const misc = {
   ) {
     let fields: { name: string; value: string }[] = [];
     for (let i = 0; i < names.length; i++) {
-      let sum = math.sum(pHands[i].map(c => c.value));
+      let sum = math.sum(pHands[i].map((c) => c.value));
       if (stood && i === index) {
         fields.push({
           name: `${names[i]}'s hand:`,
           value: `${pHands[i]
-            .map(c => c.card)
+            .map((c) => c.card)
             .join(", ")} → **\`${sum}\` Stood!** `,
         });
       } else {
         fields.push({
           name: `${names[i]}'s hand:`,
-          value: `${pHands[i].map(c => c.card).join(", ")} → **\`${sum}\`** ${
+          value: `${pHands[i].map((c) => c.card).join(", ")} → **\`${sum}\`** ${
             sum === 21 ? "**Blackjack!**" : sum > 21 ? "**Busted!**" : ""
           }`,
         });
       }
     }
-    let dSum = math.sum(dHand.map(c => c.value));
+    let dSum = math.sum(dHand.map((c) => c.value));
     fields.push({
       name: "Dealer's hand:",
       value: dTurn
-        ? `${dHand.map(c => c.card).join(", ")} → **\`${dSum}\`** ${
+        ? `${dHand.map((c) => c.card).join(", ")} → **\`${dSum}\`** ${
             dSum === 21 ? "**Blackjack!**" : dSum > 21 ? "**Busted!**" : ""
           }`
         : `${dHand[0].card}, ?`,
@@ -141,6 +141,6 @@ const misc = {
 };
 
 function sleep(sec: number) {
-  return new Promise(res => setTimeout(res, sec * 1000));
+  return new Promise((res) => setTimeout(res, sec * 1000));
 }
 export { misc, sleep, Horse };

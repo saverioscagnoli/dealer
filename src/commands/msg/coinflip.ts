@@ -55,12 +55,12 @@ const Coinflip: MsgCommand = {
       componentType: ComponentType.Button,
       dispose: true,
     });
-    cl.on("collect", async btnInt => {
+    cl.on("collect", async (btnInt) => {
       await btnInt.deferUpdate();
       choice = btnInt.component.label.toLowerCase();
       cl.stop();
     });
-    cl.on("end", async coll => {
+    cl.on("end", async (coll) => {
       await botMsg.edit({
         components: [],
       });

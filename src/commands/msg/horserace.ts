@@ -36,7 +36,7 @@ const Horserace: MsgCommand = {
     ];
     let horses: Horse[] = [];
     for (let i = 0; i < 4; i++) {
-      let hNames = horses.map(h => h.name);
+      let hNames = horses.map((h) => h.name);
       let h: Horse = {
         name: math.pick(names),
         owner: null,
@@ -56,7 +56,7 @@ const Horserace: MsgCommand = {
       horses.push(h);
     }
     let sID = math.buttonID("start");
-    let ids = horses.map(h => h.id);
+    let ids = horses.map((h) => h.id);
     ids.push(sID);
     row.addComponents(
       misc.Button({
@@ -82,7 +82,7 @@ const Horserace: MsgCommand = {
       idle: 40e3,
       componentType: ComponentType.Button,
     });
-    cl.on("collect", async btnInt => {
+    cl.on("collect", async (btnInt) => {
       await btnInt.deferUpdate();
       let comps = row.components;
       if (btnInt.customId !== sID) {
@@ -100,7 +100,7 @@ const Horserace: MsgCommand = {
         });
       } else cl.stop();
     });
-    cl.on("end", async coll => {
+    cl.on("end", async (coll) => {
       await botMsg.edit({
         embeds: [ebd],
         components: [],

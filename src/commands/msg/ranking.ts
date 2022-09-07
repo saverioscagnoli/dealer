@@ -8,7 +8,7 @@ const Ranking: MsgCommand = {
   aliases: ["rank"],
   exe: async ({ msg }) => {
     let req = await msg.guild.members.fetch();
-    let userIDs = req.map(m => m.user.id);
+    let userIDs = req.map((m) => m.user.id);
     let players: Schema[] = [];
     for (let i in userIDs) {
       let pl = await sqlite.checkDB(userIDs[i], null, false);

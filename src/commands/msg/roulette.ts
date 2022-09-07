@@ -48,7 +48,7 @@ const Roulette: MsgCommand = {
       idle: 60e3,
       max: 5,
     });
-    cl.on("collect", async btnInt => {
+    cl.on("collect", async (btnInt) => {
       await btnInt.deferUpdate();
       if (btnInt.customId === jID) {
         joinedName.push(btnInt.user.username);
@@ -65,7 +65,7 @@ const Roulette: MsgCommand = {
         });
       } else cl.stop();
     });
-    cl.on("collect", btnInt => {});
+    cl.on("collect", (btnInt) => {});
   },
 };
 

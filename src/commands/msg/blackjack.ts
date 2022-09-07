@@ -61,7 +61,7 @@ const Blackjack: MsgCommand = {
       idle: 60e3,
       max: 5,
     });
-    cl.on("collect", async btnInt => {
+    cl.on("collect", async (btnInt) => {
       await btnInt.deferUpdate();
       if (btnInt.customId === jID) {
         joinedName.push(btnInt.user.username);
@@ -78,7 +78,7 @@ const Blackjack: MsgCommand = {
         });
       } else cl.stop();
     });
-    cl.on("end", async coll => {
+    cl.on("end", async (coll) => {
       if (coll.size === 5) await sleep(1.5);
       let hID = math.buttonID("hit");
       let sID = math.buttonID("stand");
@@ -129,11 +129,11 @@ const Blackjack: MsgCommand = {
       });
       let whoDoubled = [];
       let i = 0;
-      cl.on("collect", async btnInt => {
+      cl.on("collect", async (btnInt) => {
         await btnInt.deferUpdate();
         if (btnInt.customId === hID || btnInt.customId === dID) {
           misc.draw(deck, pHands[i]);
-          let sum = math.sum(pHands[i].map(c => c.value));
+          let sum = math.sum(pHands[i].map((c) => c.value));
           if (btnInt.customId === hID) {
             row.components[2].setDisabled(true);
             if (sum >= 21) {
@@ -179,7 +179,7 @@ const Blackjack: MsgCommand = {
         });
       });
 
-      cl.on("end", async coll => {
+      cl.on("end", async (coll) => {
         await sleep(1.5);
         ebd.setTitle("All the players made their move!");
         await botMsg.edit({
@@ -195,11 +195,11 @@ const Blackjack: MsgCommand = {
           embeds: [ebd],
         });
 
-        let dSum = math.sum(dHand.map(c => c.value));
+        let dSum = math.sum(dHand.map((c) => c.value));
         while (dSum < 17) {
           await sleep(2.5);
           misc.draw(deck, dHand);
-          dSum = math.sum(dHand.map(c => c.value));
+          dSum = math.sum(dHand.map((c) => c.value));
           ebd.setTitle(
             `**Dealer drew a \`${dHand[dHand.length - 1].card}\`!**`
           );
@@ -212,7 +212,7 @@ const Blackjack: MsgCommand = {
         }
         let WorL = {};
         for (let i = 0; i < joinedCopy.length; i++) {
-          let pSum = math.sum(pHands[i].map(c => c.value));
+          let pSum = math.sum(pHands[i].map((c) => c.value));
           if (pSum > dSum && pSum <= 21) {
             WorL[joinedCopy[i]] = "winner";
           } else if (dSum > pSum && dSum <= 21) {
