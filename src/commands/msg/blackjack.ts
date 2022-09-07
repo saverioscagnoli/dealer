@@ -27,7 +27,7 @@ const Blackjack: MsgCommand = {
 
     let jID = math.buttonID("join-bj");
     let sID = math.buttonID("start-bj");
-    let joinRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    let row = new ActionRowBuilder<ButtonBuilder>().addComponents(
       misc.Button({
         customID: jID,
         label: "Join!",
@@ -44,7 +44,7 @@ const Blackjack: MsgCommand = {
     let joined: string[] = [authorID];
     blackjack.push(authorID);
     let ebd = misc.Embed({
-      title: `Dealer is hosting Blackjack table no. **\`${blackjack.length}\`**! Requested by ${username}.`,
+      title: `Dealer is hosting Blackjack table no. **\`${blackjack.length}\`**! Requested by ${username}.\nThe bet is **\`${n}\`** chips! ${Emojis.Chips}`,
       desc: `In this table there are:\n**• ${joinedName.join("\n• ")}**`,
       footer: {
         text: `Players: ${joinedName.length}/6`,
@@ -54,7 +54,7 @@ const Blackjack: MsgCommand = {
 
     let botMsg = await msg.channel.send({
       embeds: [ebd],
-      components: [joinRow],
+      components: [row],
     });
     let cl = msg.channel.createMessageComponentCollector({
       filter: filters.join(jID, sID, n, joined),
@@ -74,7 +74,7 @@ const Blackjack: MsgCommand = {
         });
         await botMsg.edit({
           embeds: [ebd],
-          components: [joinRow],
+          components: [row],
         });
       } else cl.stop();
     });

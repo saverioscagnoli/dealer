@@ -11,6 +11,7 @@ class DealerClient extends Client {
   db: QuickDB = new QuickDB({ filePath: "chips.sqlite" });
   tables: Tables = {
     blackjack: [],
+    roulette: [],
   };
   constructor() {
     super({
