@@ -96,21 +96,47 @@ const misc = {
   },
   draw(deck: Card[], hand: Card[]) {
     let p = math.pick(deck);
-    deck.splice(deck.indexOf(p, 1));
+    //deck.splice(deck.indexOf(p, 1));
     hand.push(p);
     return p as Card;
   },
-  displayHandBJ(pHand: Card[], dHand: Card[]) {
-    return [
-      {
-        name: "Your hand:",
-        value: `**\`${pHand.map(c => c.card).join(", ")}\`**`,
-      },
-      {
-        name: "Dealer's hand:",
-        value: `**\`${dHand.map(c => c.card).join(", ")}\`**`,
-      },
-    ];
+  displayHandsBJ(
+    names: string[],
+    pHands: any[][],
+    dHand: Card[],
+    index?: number,
+    stood = false,
+    dTurn = false
+  ) {
+    let fields: { name: string; value: string }[] = [];
+    for (let i = 0; i < names.length; i++) {
+      let sum = math.sum(pHands[i].map(c => c.value));
+      if (stood && i === index) {
+        fields.push({
+          name: `${names[i]}'s hand:`,
+          value: `${pHands[i]
+            .map(c => c.card)
+            .join(", ")} → **\`${sum}\` Stood!** `,
+        });
+      } else {
+        fields.push({
+          name: `${names[i]}'s hand:`,
+          value: `${pHands[i].map(c => c.card).join(", ")} → **\`${sum}\`** ${
+            sum === 21 ? "**Blackjack!**" : sum > 21 ? "**Busted!**" : ""
+          }`,
+        });
+      }
+    }
+    let dSum = math.sum(dHand.map(c => c.value));
+    fields.push({
+      name: "Dealer's hand:",
+      value: dTurn
+        ? `${dHand.map(c => c.card).join(", ")} → **\`${dSum}\`** ${
+            dSum === 21 ? "**Blackjack!**" : dSum > 21 ? "**Busted!**" : ""
+          }`
+        : `${dHand[0].card}, ?`,
+    });
+    return fields;
   },
 };
 

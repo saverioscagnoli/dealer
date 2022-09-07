@@ -22,6 +22,13 @@ const math = {
     }
     return arr;
   },
+  sum(arr: number[]) {
+    let sum = 0;
+    for (let i = 0; i < arr.length; i++) {
+      sum += arr[i];
+    }
+    return sum;
+  },
   randomID(): string {
     let pool =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";

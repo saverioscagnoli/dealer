@@ -3,11 +3,15 @@ import { QuickDB } from "quick.db";
 import * as MsgCmdFiles from "../commands/msg";
 import * as EvtFiles from "../events";
 import { MsgCommand } from "./MsgCommand";
+import { Tables } from "./Tables";
 
 class DealerClient extends Client {
   prefix: string = "deal ";
   msgCommands: Collection<string, MsgCommand> = new Collection();
   db: QuickDB = new QuickDB({ filePath: "chips.sqlite" });
+  tables: Tables = {
+    blackjack: [],
+  };
   constructor() {
     super({
       intents: [

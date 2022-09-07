@@ -44,4 +44,59 @@ export const filters = {
       }
     };
   },
+  join(
+    jID: string,
+    sID: string,
+    n: number,
+    joined: string[]
+  ): CollectorFilter<[ButtonInteraction<"cached">]> {
+    return async (btnInt): Promise<boolean> => {
+      if (jID !== btnInt.customId && sID !== btnInt.customId) return false;
+      if (btnInt.customId !== sID) {
+        if (joined.includes(btnInt.user.id)) {
+          await btnInt.reply({
+            content: "**You already joined the table!**",
+            ephemeral: true,
+          });
+          return false;
+        }
+        let valid = await sqlite.bet(btnInt.user.id, n, btnInt);
+        if (!valid) return false;
+        joined.push(btnInt.user.id);
+        return true;
+      } else {
+        if (btnInt.user.id !== joined[0]) {
+          await btnInt.reply({
+            content: "**Only the author of this command can start the match!**",
+            ephemeral: true,
+          });
+          return false;
+        } else return true;
+      }
+    };
+  },
+  blackjack(
+    ids: string[],
+    joined: string[],
+    joinedCopy: string[]
+  ): CollectorFilter<[ButtonInteraction<"cached">]> {
+    return async (btnInt): Promise<boolean> => {
+      if (!ids.includes(btnInt.customId)) return false;
+      if (!joinedCopy.includes(btnInt.user.id)) {
+        await btnInt.reply({
+          content: "**You did't join this table!**",
+          ephemeral: true,
+        });
+        return false;
+      }
+      if (btnInt.user.id !== joined[0]) {
+        await btnInt.reply({
+          content: "**It's not your turn!**",
+          ephemeral: true,
+        });
+        return false;
+      }
+      return true;
+    };
+  },
 };
