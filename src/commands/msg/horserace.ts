@@ -11,8 +11,11 @@ const Horserace: MsgCommand = {
   name: "horserace",
   description: "Bet chips on a horse and watch him go!",
   aliases: ["hr"],
-  exe: async ({ msg, args, username, authorID }) => {
+  exe: async ({ msg, args, username, authorID, pl }) => {
     let n = Number(args[0]);
+    if (args.join(" ") === "all in") {
+      n = pl.chips;
+    }
     let valid = await sqlite.bet(authorID, n, msg, false);
     if (!valid) return;
 

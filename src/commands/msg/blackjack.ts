@@ -14,7 +14,7 @@ const Blackjack: MsgCommand = {
   name: "blackjack",
   description: "Place a bet and play blackjack!",
   aliases: ["bj"],
-  exe: async ({ msg, args, authorID, username, client }) => {
+  exe: async ({ msg, args, authorID, username, pl, client }) => {
     if (client.tables.blackjack.includes(authorID)) {
       await msg.reply(
         "**You already requested a Blackjack table! Finish your match before starting another.**"
@@ -22,6 +22,9 @@ const Blackjack: MsgCommand = {
       return;
     }
     let n = Number(args[0]);
+    if (args.join(" ") === "all in") {
+      n = pl.chips;
+    }
     let valid = await sqlite.bet(authorID, n, msg);
     if (!valid) return;
 
@@ -179,7 +182,7 @@ const Blackjack: MsgCommand = {
         });
       });
 
-      cl.on("end", async (coll) => {
+      cl.on("end", async () => {
         await sleep(1.5);
         ebd.setTitle("All the players made their move!");
         await botMsg.edit({
@@ -221,7 +224,7 @@ const Blackjack: MsgCommand = {
             WorL[joinedCopy[i]] = "loser";
           } else if (dSum > 21 && pSum <= 21) {
             WorL[joinedCopy[i]] = "winner";
-          } else if (pSum == dSum) {
+          } else if (pSum === dSum) {
             WorL[joinedCopy[i]] = "push";
           }
         }

@@ -1,10 +1,4 @@
-import {
-  ButtonInteraction,
-  CollectorFilter,
-  CommandInteraction,
-  Message,
-  MessageComponentInteraction,
-} from "discord.js";
+import { ButtonInteraction, CollectorFilter } from "discord.js";
 import { sqlite } from "./sqlite";
 
 export const filters = {
@@ -92,6 +86,40 @@ export const filters = {
       if (btnInt.user.id !== joined[0]) {
         await btnInt.reply({
           content: "**It's not your turn!**",
+          ephemeral: true,
+        });
+        return false;
+      }
+      return true;
+    };
+  },
+  roulette(
+    ids: string[],
+    joined: string[],
+    uBets: any
+  ): CollectorFilter<[ButtonInteraction<"cached">]> {
+    return async (btnInt): Promise<boolean> => {
+      if (!ids.includes(btnInt.customId)) return false;
+      if (!joined.includes(btnInt.user.id)) {
+        await btnInt.reply({
+          content: "**You did't join this table!**",
+          ephemeral: true,
+        });
+        return false;
+      }
+      if (
+        uBets[btnInt.user.id].bets.length === 0 &&
+        btnInt.customId.startsWith("ready")
+      ) {
+        await btnInt.reply({
+          content: "**Place at least 1 bet before pressing Ready!**",
+          ephemeral: true,
+        });
+        return false;
+      }
+      if (uBets[btnInt.user.id].bets.includes(btnInt.component.label)) {
+        await btnInt.reply({
+          content: `**You already placed a bet on \`${btnInt.component.label}\`!**`,
           ephemeral: true,
         });
         return false;

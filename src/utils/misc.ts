@@ -5,8 +5,6 @@ import {
   EmbedBuilder,
   User,
 } from "discord.js";
-import { Transform } from "stream";
-import { Console } from "console";
 import { EmbedAssets } from "./enums";
 import { math } from "./math";
 
@@ -39,6 +37,12 @@ interface Card {
   value: number;
   card: string;
 }
+
+interface RouletteNumber {
+  color: string;
+  value: number;
+}
+
 const misc = {
   Embed(o: Embed): EmbedBuilder {
     return new EmbedBuilder()
@@ -136,6 +140,32 @@ const misc = {
           }`
         : `${dHand[0].card}, ?`,
     });
+    return fields;
+  },
+  rouletteWheel() {
+    let roulette: RouletteNumber[] = [{ value: 0, color: "🟢" }];
+    for (let i = 1; i <= 36; i++) {
+      if (i <= 10 || (i > 18 && i <= 28))
+        roulette.push(
+          i % 2 == 0 ? { value: i, color: "⚫" } : { value: i, color: "🔴" }
+        );
+      else if (i <= 18 || (i > 28 && i <= 36))
+        roulette.push(
+          i % 2 == 0 ? { value: i, color: "🔴" } : { value: i, color: "⚫" }
+        );
+    }
+    return math.shuffle(roulette);
+  },
+  displayBetsRL(names: string[], joined: string[], uObj: any) {
+    let fields: { name: string; value: string, inline?: boolean }[] = [];
+    for (let i = 0; i < names.length; i++) {
+      let bets = uObj[joined[i]].bets;
+      fields.push({
+        name: `${names[i]}'s bets:`,
+        value: bets.length === 0 ? "None!" : `• ${bets.join("\n• ")}`,
+        inline: true
+      });
+    }
     return fields;
   },
 };

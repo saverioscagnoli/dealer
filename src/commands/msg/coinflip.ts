@@ -19,8 +19,11 @@ const Coinflip: MsgCommand = {
   name: "coinflip",
   description: "Bet some chips and choose heads or tails!",
   aliases: ["cf"],
-  exe: async ({ msg, args, authorID }) => {
+  exe: async ({ msg, args, authorID, pl }) => {
     let n = Number(args[0]);
+    if (args.join(" ") === "all in") {
+      n = pl.chips;
+    }
     let valid = await sqlite.bet(authorID, n, msg);
     if (!valid) return true;
 

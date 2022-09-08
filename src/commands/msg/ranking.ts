@@ -1,5 +1,5 @@
 import { MsgCommand, Schema } from "../../typings";
-import { misc, sqlite, EmbedAssets, Emojis } from "../../utils";
+import { misc, sqlite, Emojis } from "../../utils";
 
 const Ranking: MsgCommand = {
   name: "ranking",

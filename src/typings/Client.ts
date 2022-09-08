@@ -6,7 +6,7 @@ import { MsgCommand } from "./MsgCommand";
 import { Tables } from "./Tables";
 
 class DealerClient extends Client {
-  prefix: string = "deal ";
+  prefix = "deal ";
   msgCommands: Collection<string, MsgCommand> = new Collection();
   db: QuickDB = new QuickDB({ filePath: "chips.sqlite" });
   tables: Tables = {
