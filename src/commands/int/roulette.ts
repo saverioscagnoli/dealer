@@ -1,3 +1,4 @@
+import { IntCommand } from "../../typings";
 import { createCanvas } from "canvas";
 import {
   ActionRowBuilder,
@@ -5,8 +6,8 @@ import {
   ButtonBuilder,
   ButtonStyle,
   ComponentType,
+  ApplicationCommandOptionType,
 } from "discord.js";
-import { MsgCommand } from "../../typings";
 import {
   EmbedAssets,
   Emojis,
@@ -16,18 +17,20 @@ import {
   sleep,
   sqlite,
 } from "../../utils";
-
-const Roulette: MsgCommand = {
+const Roulette: IntCommand = {
   name: "roulette",
   description: "Play european roulette!",
-  aliases: ["rl"],
-  exe: async ({ msg, args, username, authorID, pl, client }) => {
-    let { roulette } = client.tables;
-    let n = Number(args[0]);
-    if (args.join(" ") === "all in") {
-      n = pl.chips;
-    }
-    let valid = await sqlite.bet(authorID, n, msg, false);
+  options: [
+    {
+      name: "bet",
+      description: "How many chips you want to bet",
+      type: ApplicationCommandOptionType.Integer,
+      required: true,
+    },
+  ],
+  exe: async ({ int, args, username, authorID, client }) => {
+    let n = args.getInteger("bet");
+    let valid = await sqlite.bet(authorID, n, int, false);
     if (!valid) return;
 
     let jID = math.buttonID("join-rl");
@@ -46,6 +49,7 @@ const Roulette: MsgCommand = {
     );
     let joinedName: string[] = [username];
     let joined: string[] = [authorID];
+    let { roulette } = client.tables;
     roulette.push(authorID);
     let ebd = misc.Embed({
       title: `Dealer is hosting Roulette table no. **\`${roulette.length}\`**! Requested by ${username}.\nThe bet is **\`${n}\`** chips! ${Emojis.Chips}`,
@@ -56,11 +60,11 @@ const Roulette: MsgCommand = {
       },
     });
 
-    let botMsg = await msg.channel.send({
+    await int.reply({
       embeds: [ebd],
       components: [row],
     });
-    let cl = msg.channel.createMessageComponentCollector({
+    let cl = int.channel.createMessageComponentCollector({
       filter: filters.join(jID, sID, n, joined),
       idle: 60e3,
       max: 5,
@@ -76,7 +80,7 @@ const Roulette: MsgCommand = {
           text: `Players: ${joinedName.length}/6`,
           iconURL: EmbedAssets.ProPic,
         });
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
           components: [row],
         });
@@ -170,7 +174,7 @@ const Roulette: MsgCommand = {
           iconURL: EmbedAssets.ProPic,
         },
       });
-      await botMsg.edit({
+      await int.editReply({
         embeds: [ebd],
         components: rows,
       });
@@ -178,7 +182,7 @@ const Roulette: MsgCommand = {
       ids.push(resetID);
       ids.push(readyID);
       let readys: string[] = [];
-      let cl = msg.channel.createMessageComponentCollector({
+      let cl = int.channel.createMessageComponentCollector({
         filter: filters.roulette(ids, joined, uBets, readys),
         idle: 6e4,
         componentType: ComponentType.Button,
@@ -207,7 +211,7 @@ const Roulette: MsgCommand = {
           text: `Players ready: ${readys.length}/${joined.length}`,
           iconURL: EmbedAssets.ProPic,
         });
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
           components: rows,
         });
@@ -215,14 +219,14 @@ const Roulette: MsgCommand = {
       cl.on("end", async (coll) => {
         await sleep(1.5);
         ebd.setTitle("Everyone placed their bets!");
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
           components: [],
         });
         if (coll.size === 0) return;
         await sleep(3);
         ebd.setImage(EmbedAssets.RouletteSpinning);
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
         });
         let rWheel = misc.rouletteWheel();
@@ -326,7 +330,7 @@ const Roulette: MsgCommand = {
         ebd.setTitle(`The number was **\`${picked.color} ${picked.value}\`**!`);
         ebd.setFields(fields);
         roulette.splice(roulette.indexOf(authorID));
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
           files: [atc],
         });

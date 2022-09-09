@@ -2,9 +2,12 @@ import {
   ButtonBuilder,
   ButtonStyle,
   ColorResolvable,
+  CommandInteraction,
   EmbedBuilder,
+  Message,
   User,
 } from "discord.js";
+import { DealerClient } from "../typings";
 import { EmbedAssets } from "./enums";
 import { math } from "./math";
 
@@ -154,7 +157,7 @@ const misc = {
           i % 2 == 0 ? { value: i, color: "🔴" } : { value: i, color: "⚫" }
         );
     }
-    return math.shuffle(roulette);
+    return roulette;
   },
   displayBetsRL(names: string[], joined: string[], uObj: any) {
     let fields: { name: string; value: string; inline?: boolean }[] = [];
@@ -167,6 +170,26 @@ const misc = {
       });
     }
     return fields;
+  },
+  async checkForTables(
+    id: string,
+    client: DealerClient,
+    table: string,
+    req: Message | CommandInteraction
+  ) {
+    if (client.tables[table]?.includes(id)) {
+      let str = `**You already requested a table for ${table}! Finish your previous match before starting another.**`;
+      if (req instanceof CommandInteraction) {
+        await req.reply({
+          content: str,
+          ephemeral: true,
+        });
+      } else {
+        await req.reply(str);
+      }
+      return false;
+    }
+    return true;
   },
 };
 

@@ -1,6 +1,6 @@
 import { Event } from "../typings";
 import { client } from "..";
-import { sqlite } from "../utils";
+import { misc, sqlite } from "../utils";
 
 const MsgCreate: Event<"messageCreate"> = {
   name: "messageCreate",
@@ -11,6 +11,13 @@ const MsgCreate: Event<"messageCreate"> = {
     let cmd =
       client.msgCommands.get(cmdName) ||
       client.msgCommands.find((c) => c.aliases && c.aliases.includes(cmdName));
+    let freeTables = await misc.checkForTables(
+      msg.author.id,
+      client,
+      cmd.name,
+      msg
+    );
+    if (!freeTables) return;
     let pl = await sqlite.checkDB(msg.author.id, msg.author.username, true);
     if (!cmd) return;
     try {

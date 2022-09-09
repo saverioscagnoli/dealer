@@ -1,4 +1,4 @@
-import { MsgCommand } from "../../typings";
+import { IntCommand } from "../../typings";
 import {
   EmbedAssets,
   Emojis,
@@ -8,18 +8,27 @@ import {
   sleep,
   sqlite,
 } from "../../utils";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ApplicationCommandOptionType,
+} from "discord.js";
 
-const Blackjack: MsgCommand = {
+const Blackjack: IntCommand = {
   name: "blackjack",
   description: "Place a bet and play blackjack!",
-  aliases: ["bj"],
-  exe: async ({ msg, args, authorID, username, pl, client }) => {
-    let n = Number(args[0]);
-    if (args.join(" ") === "all in") {
-      n = pl.chips;
-    }
-    let valid = await sqlite.bet(authorID, n, msg);
+  options: [
+    {
+      name: "bet",
+      description: "How many chips you want to bet.",
+      type: ApplicationCommandOptionType.Integer,
+      required: true,
+    },
+  ],
+  exe: async ({ int, args, authorID, username, client }) => {
+    let n = args.getInteger("bet");
+    let valid = await sqlite.bet(authorID, n, int);
     if (!valid) return;
 
     let jID = math.buttonID("join-bj");
@@ -49,11 +58,11 @@ const Blackjack: MsgCommand = {
       },
     });
 
-    let botMsg = await msg.channel.send({
+    await int.reply({
       embeds: [ebd],
       components: [row],
     });
-    let cl = msg.channel.createMessageComponentCollector({
+    let cl = int.channel.createMessageComponentCollector({
       filter: filters.join(jID, sID, n, joined),
       idle: 60e3,
       max: 5,
@@ -69,7 +78,7 @@ const Blackjack: MsgCommand = {
           text: `Players: ${joinedName.length}/6`,
           iconURL: EmbedAssets.ProPic,
         });
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
           components: [row],
         });
@@ -114,12 +123,12 @@ const Blackjack: MsgCommand = {
         title: `It's ${joinedName[0]}'s turn!`,
         fields: misc.displayHandsBJ(joinedName, pHands, dHand),
       });
-      await botMsg.edit({
+      await int.editReply({
         embeds: [ebd],
         components: [row],
       });
       let joinedCopy = [...joined];
-      let cl = msg.channel.createMessageComponentCollector({
+      let cl = int.channel.createMessageComponentCollector({
         filter: filters.blackjack([hID, sID, dID], joined, joinedCopy),
         idle: 1.8e5,
         dispose: true,
@@ -170,7 +179,7 @@ const Blackjack: MsgCommand = {
             row.components[2].setDisabled(false);
           }
         }
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
           components: [row],
         });
@@ -179,7 +188,7 @@ const Blackjack: MsgCommand = {
       cl.on("end", async () => {
         await sleep(1.5);
         ebd.setTitle("All the players made their move!");
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
           components: [],
         });
@@ -188,7 +197,7 @@ const Blackjack: MsgCommand = {
         ebd.setFields(
           misc.displayHandsBJ(joinedName, pHands, dHand, null, null, true)
         );
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
         });
 
@@ -203,7 +212,7 @@ const Blackjack: MsgCommand = {
           ebd.setFields(
             misc.displayHandsBJ(joinedName, pHands, dHand, null, null, true)
           );
-          await botMsg.edit({
+          await int.editReply({
             embeds: [ebd],
           });
         }
@@ -250,10 +259,9 @@ const Blackjack: MsgCommand = {
         ebd.setTitle("The game is over!");
         ebd.setDescription(`• ${formattedWin.join("\n• ")}`);
         await sleep(2);
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
         });
-        await botMsg.react(Emojis.GG);
       });
     });
   },

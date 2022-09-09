@@ -19,6 +19,8 @@ class DealerClient extends Client {
   intCommands: Collection<string, IntCommand> = new Collection();
   db: QuickDB = new QuickDB({ filePath: "chips.sqlite" });
   tables: Tables = {
+    coinflip: [],
+    horserace: [],
     blackjack: [],
     roulette: [],
   };

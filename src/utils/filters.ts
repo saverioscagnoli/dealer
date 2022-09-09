@@ -96,13 +96,24 @@ export const filters = {
   roulette(
     ids: string[],
     joined: string[],
-    uBets: any
+    uBets: any,
+    readys: string[]
   ): CollectorFilter<[ButtonInteraction<"cached">]> {
     return async (btnInt): Promise<boolean> => {
       if (!ids.includes(btnInt.customId)) return false;
       if (!joined.includes(btnInt.user.id)) {
         await btnInt.reply({
           content: "**You did't join this table!**",
+          ephemeral: true,
+        });
+        return false;
+      }
+      if (
+        btnInt.customId.startsWith("ready") &&
+        readys.includes(btnInt.user.id)
+      ) {
+        await btnInt.reply({
+          content: "**You already pressed ready!**",
           ephemeral: true,
         });
         return false;

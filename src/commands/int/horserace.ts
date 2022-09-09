@@ -1,22 +1,27 @@
 import {
+  ApplicationCommandOptionType,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
   ComponentType,
 } from "discord.js";
-import { MsgCommand } from "../../typings";
+import { IntCommand } from "../../typings";
 import { Emojis, filters, Horse, math, misc, sleep, sqlite } from "../../utils";
 
-const Horserace: MsgCommand = {
+const Horserace: IntCommand = {
   name: "horserace",
   description: "Bet chips on a horse and watch him go!",
-  aliases: ["hr"],
-  exe: async ({ msg, args, username, authorID, pl, client }) => {
-    let n = Number(args[0]);
-    if (args.join(" ") === "all in") {
-      n = pl.chips;
-    }
-    let valid = await sqlite.bet(authorID, n, msg, false);
+  options: [
+    {
+      name: "bet",
+      description: "How many chips you want to bet.",
+      type: ApplicationCommandOptionType.Integer,
+      required: true,
+    },
+  ],
+  exe: async ({ int, args, username, authorID, client }) => {
+    let n = args.getInteger("bet");
+    let valid = await sqlite.bet(authorID, n, int, false);
     if (!valid) return;
 
     let { horserace } = client.tables;
@@ -77,12 +82,12 @@ const Horserace: MsgCommand = {
       }`,
       desc: misc.displayHorses(horses),
     });
-    let botMsg = await msg.channel.send({
+    await int.reply({
       embeds: [ebd],
       components: [row],
     });
     let joined = [];
-    let cl = msg.channel.createMessageComponentCollector({
+    let cl = int.channel.createMessageComponentCollector({
       filter: filters.horseRace(ids, n, joined, sID, authorID),
       idle: 40e3,
       componentType: ComponentType.Button,
@@ -99,21 +104,21 @@ const Horserace: MsgCommand = {
 
         horses[i].owner = btnInt.user;
         ebd.setDescription(misc.displayHorses(horses));
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
           components: [row],
         });
       } else cl.stop();
     });
     cl.on("end", async (coll) => {
-      await botMsg.edit({
+      await int.editReply({
         embeds: [ebd],
         components: [],
       });
       if (coll.size == 0) return;
       for (let i = 3; i >= 1; i--) {
         ebd.setTitle(`Race starting in **\`${i}\`**...`);
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
         });
         await sleep(1);
@@ -140,7 +145,7 @@ const Horserace: MsgCommand = {
           ebd.setTitle(`**\`${horses[i].name}\`** has the lead!`);
         }
         ebd.setDescription(misc.displayHorses(horses));
-        await botMsg.edit({
+        await int.editReply({
           embeds: [ebd],
         });
         await sleep(math.rng(1.5, 1.7, true));
@@ -165,7 +170,7 @@ const Horserace: MsgCommand = {
       }
       horserace.splice(horserace.indexOf(authorID), 1);
       ebd.setTitle("The race is over!");
-      await botMsg.edit({
+      await int.editReply({
         content: `${w.join("\n")}`,
         embeds: [ebd],
       });

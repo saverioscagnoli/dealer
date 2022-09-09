@@ -1,10 +1,11 @@
+import { IntCommand } from "../../typings";
 import {
   ActionRowBuilder,
+  ApplicationCommandOptionType,
   ButtonBuilder,
   ButtonStyle,
   ComponentType,
 } from "discord.js";
-import { MsgCommand } from "../../typings";
 import {
   EmbedAssets,
   Emojis,
@@ -15,17 +16,22 @@ import {
   sqlite,
 } from "../../utils";
 
-const Coinflip: MsgCommand = {
+const Coinflip: IntCommand = {
   name: "coinflip",
   description: "Bet some chips and choose heads or tails!",
-  aliases: ["cf"],
-  exe: async ({ msg, args, authorID, pl, client }) => {
-    let n = Number(args[0]);
-    if (args.join(" ") === "all in") {
-      n = pl.chips;
-    }
-    let valid = await sqlite.bet(authorID, n, msg);
+  options: [
+    {
+      name: "bet",
+      description: "How many chips you want to bet.",
+      type: ApplicationCommandOptionType.Integer,
+      required: true,
+    },
+  ],
+  exe: async ({ int, args, authorID, client }) => {
+    let n = args.getInteger("bet");
+    let valid = await sqlite.bet(authorID, n, int);
     if (!valid) return true;
+
     let { coinflip } = client.tables;
     coinflip.push(authorID);
     let choice: string;
@@ -48,12 +54,12 @@ const Coinflip: MsgCommand = {
       title: "Heads or tails?",
       image: EmbedAssets.CoinflipStill,
     });
-    let botMsg = await msg.channel.send({
+    await int.reply({
       embeds: [ebd],
       components: [row],
     });
 
-    let cl = msg.channel.createMessageComponentCollector({
+    let cl = int.channel.createMessageComponentCollector({
       filter: filters.coinflip([hID, tID], authorID),
       idle: 15e3,
       componentType: ComponentType.Button,
@@ -66,7 +72,7 @@ const Coinflip: MsgCommand = {
     });
     cl.on("end", async (coll) => {
       coinflip.splice(coinflip.indexOf(authorID), 1);
-      await botMsg.edit({
+      await int.editReply({
         components: [],
       });
       if (coll.size === 0) return;
@@ -74,7 +80,7 @@ const Coinflip: MsgCommand = {
         .setTitle(`You chose **\`${choice}\`**!`)
         .setImage(EmbedAssets.CoinflipGif)
         .setFooter({ text: "Flipping the coin..." });
-      await botMsg.edit({
+      await int.editReply({
         embeds: [ebd],
       });
       ebd
@@ -92,7 +98,7 @@ const Coinflip: MsgCommand = {
         ebd.setColor("#FF0000").setFooter({ text: "You lost!" });
         await sqlite.updWL(authorID, "losses");
       }
-      await botMsg.edit({
+      await int.editReply({
         content: str,
         embeds: [ebd],
       });
