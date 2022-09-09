@@ -7,7 +7,7 @@ const Balance: MsgCommand = {
   aliases: ["b"],
   exe: async ({ msg, username, pl }) => {
     let wr = Math.trunc((pl.wins / (pl.wins + pl.losses)) * 100);
-    if (pl.wins == 0 && pl.losses == 0) {
+    if (pl.wins === 0 && pl.losses === 0) {
       wr = 0;
     }
     let fields = [

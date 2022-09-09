@@ -157,13 +157,13 @@ const misc = {
     return math.shuffle(roulette);
   },
   displayBetsRL(names: string[], joined: string[], uObj: any) {
-    let fields: { name: string; value: string, inline?: boolean }[] = [];
+    let fields: { name: string; value: string; inline?: boolean }[] = [];
     for (let i = 0; i < names.length; i++) {
       let bets = uObj[joined[i]].bets;
       fields.push({
         name: `${names[i]}'s bets:`,
         value: bets.length === 0 ? "None!" : `• ${bets.join("\n• ")}`,
-        inline: true
+        inline: true,
       });
     }
     return fields;

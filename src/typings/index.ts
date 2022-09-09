@@ -3,3 +3,4 @@ export * from "./MsgCommand";
 export * from "./Event";
 export * from "./Schema";
 export * from "./Tables";
+export * from "./IntCommand";
