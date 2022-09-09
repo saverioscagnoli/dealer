@@ -8,6 +8,8 @@ const IntCreate: Event<"interactionCreate"> = {
   exe: async (int) => {
     if (int.isCommand()) {
       let cmd = client.intCommands.get(int.commandName);
+      let cd = await misc.checkCD(int.user.id, client, cmd.name, int);
+      if (!cd) return;
       let freeTables = await misc.checkForTables(
         int.user.id,
         client,
@@ -16,14 +18,22 @@ const IntCreate: Event<"interactionCreate"> = {
       );
       if (!freeTables) return;
       let pl = await sqlite.checkDB(int.user.id, int.user.username, true);
-      await cmd.exe({
-        int,
-        args: int.options as CommandInteractionOptionResolver,
-        client,
-        authorID: int.user.id,
-        username: int.user.username,
-        pl,
-      });
+      try {
+        await cmd.exe({
+          int,
+          args: int.options as CommandInteractionOptionResolver,
+          client,
+          authorID: int.user.id,
+          username: int.user.username,
+          pl,
+        });
+        if (cmd.cd) {
+          let sTime = Date.now() + cmd.cd;
+          client.cds[int.user.id][cmd.name] = sTime;
+        }
+      } catch (e) {
+        console.warn(e);
+      }
     }
   },
 };

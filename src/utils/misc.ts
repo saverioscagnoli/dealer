@@ -191,6 +191,59 @@ const misc = {
     }
     return true;
   },
+  async checkCD(
+    id: string,
+    client: DealerClient,
+    cmdName: string,
+    req: Message | CommandInteraction
+  ): Promise<boolean> {
+    if (!client.cds[id]) {
+      client.cds[id] = {};
+    }
+    let cd = client.cds[id][cmdName];
+    if (cd) {
+      let t = cd - Date.now();
+      if (t > 0) {
+        let str = `**Please wait until cooldown expires! Remaning: \`${misc.ms(
+          t
+        )}\`**`;
+        if (req instanceof CommandInteraction) {
+          await req.reply({
+            content: str,
+            ephemeral: true,
+          });
+        } else {
+          await req.reply(str);
+        }
+        return false;
+      }
+    }
+    return true;
+  },
+  ms(duration: number) {
+    const portions: string[] = [];
+
+    const msInHour = 1000 * 60 * 60;
+    const hours = Math.trunc(duration / msInHour);
+    if (hours > 0) {
+      portions.push(hours + "h");
+      duration = duration - hours * msInHour;
+    }
+
+    const msInMinute = 1000 * 60;
+    const minutes = Math.trunc(duration / msInMinute);
+    if (minutes > 0) {
+      portions.push(minutes + "m");
+      duration = duration - minutes * msInMinute;
+    }
+
+    const seconds = Math.trunc(duration / 1000);
+    if (seconds > 0) {
+      portions.push(seconds + "s");
+    }
+
+    return portions.join(" ");
+  },
 };
 
 function sleep(sec: number) {

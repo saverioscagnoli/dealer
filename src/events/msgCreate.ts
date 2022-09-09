@@ -11,6 +11,9 @@ const MsgCreate: Event<"messageCreate"> = {
     let cmd =
       client.msgCommands.get(cmdName) ||
       client.msgCommands.find((c) => c.aliases && c.aliases.includes(cmdName));
+    if (!cmd) return;
+    let cd = await misc.checkCD(msg.author.id, client, cmd.name, msg);
+    if (!cd) return;
     let freeTables = await misc.checkForTables(
       msg.author.id,
       client,
@@ -19,7 +22,6 @@ const MsgCreate: Event<"messageCreate"> = {
     );
     if (!freeTables) return;
     let pl = await sqlite.checkDB(msg.author.id, msg.author.username, true);
-    if (!cmd) return;
     try {
       await msg.channel.sendTyping();
       await cmd.exe({
@@ -30,6 +32,10 @@ const MsgCreate: Event<"messageCreate"> = {
         username: msg.author.username,
         pl,
       });
+      if (cmd.cd) {
+        let sTime = Date.now() + cmd.cd;
+        client.cds[msg.author.id][cmd.name] = sTime;
+      }
     } catch (e) {
       console.warn(e);
     }

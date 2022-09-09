@@ -17,6 +17,7 @@ class DealerClient extends Client {
   prefix = "deal ";
   msgCommands: Collection<string, MsgCommand> = new Collection();
   intCommands: Collection<string, IntCommand> = new Collection();
+  cds = {};
   db: QuickDB = new QuickDB({ filePath: "chips.sqlite" });
   tables: Tables = {
     coinflip: [],
@@ -69,7 +70,9 @@ class DealerClient extends Client {
         ),
         { body: slashCommands }
       );
-      console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+      console.log(
+        `Successfully reloaded ${data.length} application (/) commands.`
+      );
     } catch (e) {
       console.error(e);
     }
