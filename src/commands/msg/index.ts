@@ -7,3 +7,4 @@ export * from "./chips";
 export * from "./ranking";
 export * from "./roulette";
 export * from "./help";
+export * from "./slots";

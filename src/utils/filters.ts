@@ -138,4 +138,20 @@ export const filters = {
       return true;
     };
   },
+  slots(id: string, userID): CollectorFilter<[ButtonInteraction<"cached">]> {
+    return async (btnInt) => {
+      if (btnInt.customId !== id) return false;
+      if (btnInt.user.id !== userID) {
+        await btnInt.reply({
+          content:
+            "This is not your slot machine! use **`deal slot`** or **`/slot`** to play on your own.",
+          ephemeral: true,
+        });
+        return false;
+      }
+      let valid = await sqlite.bet(userID, 50, btnInt, true);
+      if (!valid) return false;
+      return true;
+    };
+  },
 };
