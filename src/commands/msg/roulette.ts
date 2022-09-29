@@ -21,6 +21,7 @@ const Roulette: MsgCommand = {
   name: "roulette",
   description: "Play european roulette!",
   aliases: ["rl"],
+  cd: 1e4,
   exe: async ({ msg, args, username, authorID, pl, client }) => {
     let { roulette } = client.tables;
     let n = Number(args[0]);

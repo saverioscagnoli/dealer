@@ -244,6 +244,9 @@ const misc = {
 
     return portions.join(" ");
   },
+  capitalize(str: string) {
+    return str[0].toUpperCase() + str.slice(1);
+  },
 };
 
 function sleep(sec: number) {

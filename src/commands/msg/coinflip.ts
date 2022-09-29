@@ -19,6 +19,7 @@ const Coinflip: MsgCommand = {
   name: "coinflip",
   description: "Bet some chips and choose heads or tails!",
   aliases: ["cf"],
+  cd: 1e4,
   exe: async ({ msg, args, authorID, pl, client }) => {
     let n = Number(args[0]);
     if (args.join(" ") === "all in") {

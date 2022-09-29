@@ -16,5 +16,4 @@ enum Emojis {
   Invis = "<:invis:1014236700526006343>",
   GG = "<a:gg:1014326826979557446>",
 }
-
 export { EmbedAssets, Emojis };

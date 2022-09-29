@@ -11,6 +11,7 @@ const Horserace: MsgCommand = {
   name: "horserace",
   description: "Bet chips on a horse and watch him go!",
   aliases: ["hr"],
+  cd: 1e4,
   exe: async ({ msg, args, username, authorID, pl, client }) => {
     let n = Number(args[0]);
     if (args.join(" ") === "all in") {

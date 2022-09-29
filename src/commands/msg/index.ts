@@ -6,3 +6,4 @@ export * from "./blackjack";
 export * from "./chips";
 export * from "./ranking";
 export * from "./roulette";
+export * from "./help";

@@ -14,6 +14,7 @@ const Blackjack: MsgCommand = {
   name: "blackjack",
   description: "Place a bet and play blackjack!",
   aliases: ["bj"],
+  cd: 1e4,
   exe: async ({ msg, args, authorID, username, pl, client }) => {
     let n = Number(args[0]);
     if (args.join(" ") === "all in") {
