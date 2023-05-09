@@ -5,6 +5,7 @@ import {
   ChatInputApplicationCommandData
 } from "discord.js";
 import { Dealer } from "../structs";
+import { DatabaseModel } from "./DatabaseModel";
 
 export interface Interaction extends CommandInteraction {
   member: GuildMember;
@@ -14,6 +15,7 @@ export interface ExeOptions {
   client: Dealer;
   int: Interaction;
   args: CommandInteractionOptionResolver;
+  data: DatabaseModel;
 }
 
 export type SlashCommandT = {

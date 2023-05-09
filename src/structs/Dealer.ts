@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import { SlashCommandT, Interaction as ExtendedInteraction } from "../types";
 import { QuickDB } from "quick.db";
-import { CDS_PATH, CHIPS_PATH, COMMANDS_DIR } from "../utils";
+import { CDS_PATH, CHIPS_PATH, COMMANDS_DIR, Utils } from "../utils";
 import { SlashCommand } from "./SlashCommand";
 import { readdirSync } from "fs";
 
@@ -79,7 +79,8 @@ export class Dealer extends Client {
       cmd.exe({
         client: this,
         int: int as ExtendedInteraction,
-        args: int.options as CommandInteractionOptionResolver
+        args: int.options as CommandInteractionOptionResolver,
+        data: await Utils.readDb(int.user.id)
       });
     } catch (err) {
       console.error(err);
