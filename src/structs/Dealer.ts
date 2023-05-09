@@ -1,4 +1,5 @@
 import {
+  ActivityType,
   CacheType,
   Client,
   Collection,
@@ -68,6 +69,7 @@ export class Dealer extends Client {
 
   private onReady() {
     console.log(`Logged in as ${this.user.tag}.`);
+    this.user.setActivity({ type: ActivityType.Watching, name: "hentai" });
   }
 
   private async onInteractionCreate(int: Interaction<CacheType>) {
