@@ -8,7 +8,7 @@ import {
   ComponentType
 } from "discord.js";
 import { SlashCommand } from "../structs";
-import { CHIPS_EMOJI, IMG_DIR, Utils } from "../utils";
+import { CHIPS_EMOJI, COINFLIP_IMG, Utils } from "../utils";
 import { randomUUID } from "crypto";
 
 export default new SlashCommand({
@@ -24,7 +24,7 @@ export default new SlashCommand({
   ],
   exe: async ({ int, args, data }) => {
     let bet = args.getInteger("bet");
-    let isValid = Utils.validateBet(bet, data.chips, int.user.id);
+    let isValid = await Utils.validateBet(bet, data.chips, int.user.id);
 
     if (typeof isValid === "string") {
       await int.reply({ content: isValid, ephemeral: true });
@@ -78,7 +78,7 @@ export default new SlashCommand({
       let HorT = Utils.rng(1, 2) === 1 ? "heads" : "tails";
       let won = HorT === choice;
       let winnings = bet * 2;
-      let coinImg = new AttachmentBuilder(IMG_DIR + HorT + ".png", {
+      let coinImg = new AttachmentBuilder(COINFLIP_IMG + HorT + ".png", {
         name: "coin.png"
       });
       let title = won

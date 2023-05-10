@@ -5,6 +5,7 @@ export class SlashCommand implements SlashCommandT {
   public name: string;
   public description: string;
   public options?: ApplicationCommandOptionData[];
+  cd?: number;
   public exe: (opts: ExeOptions) => void;
 
   constructor(props: SlashCommand) {
