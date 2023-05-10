@@ -9,6 +9,10 @@ export abstract class Utils {
     return randomInt(min, max + 1);
   }
 
+  public static pick<T>(arr: T[]) {
+    return arr[Utils.rng(0, arr.length - 1)];
+  }
+
   public static sleep(ms: number) {
     return new Promise(res => setTimeout(res, ms));
   }
