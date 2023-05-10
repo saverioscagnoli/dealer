@@ -6,14 +6,14 @@ export class Horse {
   public name: string;
   public ownerId: string;
   public ownerName: string;
-  public length: String[];
+  public progress: String[];
   public customId: string;
 
   constructor(name: string) {
     this.name = name;
     this.ownerId = null;
     this.ownerName = null;
-    this.length = [this.getSprite()];
+    this.progress = [this.getSprite()];
     this.customId = randomUUID();
   }
 
