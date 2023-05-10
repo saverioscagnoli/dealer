@@ -9,6 +9,10 @@ export abstract class Utils {
     return randomInt(min, max + 1);
   }
 
+  public static pick<T>(arr: T[]) {
+    return arr[Utils.rng(0, arr.length - 1)];
+  }
+
   public static sleep(ms: number) {
     return new Promise(res => setTimeout(res, ms));
   }
@@ -17,9 +21,12 @@ export abstract class Utils {
     return new EmbedBuilder({ ...props, color: EMBED_COLOR });
   }
 
-  public static validateBet(bet: number, chips: number) {
+  public static async validateBet(bet: number, chips: number, id?: string) {
     if (bet < 1) return "You can't bet less than 1 chip.";
     if (bet > chips) return "You can't bet more chips than you have.";
+    if (id) {
+      await Utils.editChips(id, -bet);
+    }
     return true;
   }
 
@@ -40,13 +47,18 @@ export abstract class Utils {
     await Dealer.profData.set(id, data);
   }
 
-  public static async editDbValue(
-    id: string,
-    key: keyof DatabaseModel,
-    value: any
-  ) {
-    let data: DatabaseModel = await Utils.readDb(id);
-    data[key] = value;
-    Dealer.profData.set(id, data);
+  public static async editChips(id: string, n: number) {
+    let data = await Utils.readDb(id);
+    await Utils.writeDb(id, { ...data, chips: data.chips + n });
+  }
+
+  public static async editWins(id: string, n: number) {
+    let data = await Utils.readDb(id);
+    await Utils.writeDb(id, { ...data, wins: data.wins + n });
+  }
+
+  public static async editLosses(id: string, n: number) {
+    let data = await Utils.readDb(id);
+    await Utils.writeDb(id, { ...data, losses: data.losses + n });
   }
 }
