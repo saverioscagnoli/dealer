@@ -13,6 +13,17 @@ export abstract class Utils {
     return arr[Utils.rng(0, arr.length - 1)];
   }
 
+  public static shuffle<T>(arr: T[]) {
+    let ci = arr.length;
+    let rndi: number;
+    while (ci != 0) {
+      rndi = Math.floor(Math.random() * ci);
+      ci--;
+      [arr[ci], arr[rndi]] = [arr[rndi], arr[ci]];
+    }
+    return arr;
+  }
+
   public static sleep(ms: number) {
     return new Promise(res => setTimeout(res, ms));
   }
@@ -50,7 +61,7 @@ export abstract class Utils {
         deck.push(card);
       }
     }
-    return deck;
+    return Utils.shuffle(deck);
   }
 
   public static async validateBet(bet: number, chips: number, id?: string) {

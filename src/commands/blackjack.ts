@@ -3,10 +3,13 @@ import {
   ApplicationCommandOptionType,
   ButtonBuilder,
   ButtonInteraction,
-  ButtonStyle
+  ButtonStyle,
+  CacheType,
+  ComponentType,
+  InteractionCollector
 } from "discord.js";
-import { Player, SlashCommand } from "../structs";
-import { Utils } from "../utils";
+import { BlackjackPlayer, SlashCommand } from "../structs";
+import { CHIPS_EMOJI, Utils } from "../utils";
 import { randomUUID } from "crypto";
 
 export default new SlashCommand({
@@ -22,7 +25,7 @@ export default new SlashCommand({
   ],
   exe: async ({ int, args, data, client }) => {
     let bet = args.getInteger("bet");
-    let msg = await Utils.validateBet(bet, data.chips);
+    let msg = await Utils.validateBet(bet, data.chips, int.user.id);
     if (typeof msg === "string") {
       await int.reply({ content: msg, ephemeral: true });
       return;
@@ -42,12 +45,13 @@ export default new SlashCommand({
       })
     );
     let deck = Utils.blackjackDeck();
-    let players = [new Player(int.user.id)];
+    let players = [new BlackjackPlayer(int.user.id)];
 
     players[0].draw(deck);
     players[0].draw(deck);
+    players[0].sum();
 
-    const updateEmbed = () =>
+    const joinEmbed = () =>
       Utils.embed({
         title: "Blackjack table!",
         description: `**-- Players --** \n${players
@@ -55,7 +59,7 @@ export default new SlashCommand({
           .join("\n")}`
       });
 
-    await int.reply({ embeds: [updateEmbed()], components: [row] });
+    await int.reply({ embeds: [joinEmbed()], components: [row] });
 
     const filter = async (bint: ButtonInteraction<"cached">) => {
       const validate = () => {
@@ -111,43 +115,148 @@ export default new SlashCommand({
       if (bint.customId === startId) {
         matchCl.stop();
       } else {
-        let p = new Player(bint.user.id);
+        let p = new BlackjackPlayer(bint.user.id);
         p.draw(deck);
         p.draw(deck);
+        p.sum();
         players.push(p);
-        await int.editReply({ embeds: [updateEmbed()] });
+        await int.editReply({ embeds: [joinEmbed()] });
       }
     });
     matchCl.on("end", async () => {
-      let dealer = new Player(client.user.id);
+      let dealer = new BlackjackPlayer(client.user.id);
       dealer.draw(deck);
       dealer.draw(deck);
+      dealer.sum();
+      players.unshift(dealer);
+      let customIds = [randomUUID(), randomUUID(), randomUUID()];
+      let row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder({
+          customId: customIds[0],
+          label: "Hit",
+          style: ButtonStyle.Secondary
+        }),
+        new ButtonBuilder({
+          customId: customIds[1],
+          label: "Stand",
+          style: ButtonStyle.Secondary
+        }),
+        new ButtonBuilder({
+          customId: customIds[2],
+          label: "x2",
+          style: ButtonStyle.Danger
+        })
+      );
+
+      const filter = async (bint: ButtonInteraction<"cached">) => {
+        const validate = () => Utils.validateBint(customIds, bint.customId);
+        const isTurn = async () => {
+          if (bint.user.id !== turn) {
+            await bint.reply({
+              content: "It's not your turn!",
+              ephemeral: true
+            });
+            return false;
+          }
+          return true;
+        };
+
+        return validate() && (await isTurn());
+      };
+
+      let cl = int.channel.createMessageComponentCollector({
+        filter,
+        componentType: ComponentType.Button
+      });
+
+      let turn = players[1].id;
+
+      const displayHand = (p: BlackjackPlayer) => {
+        const { id, hand, score, bust } = p;
+        let str = `${hand.map(c => c.value + c.suit).join(" ")} → \`${score}\``;
+
+        if (id === dealer.id && !cl.ended) {
+          str = `${hand[0].value + hand[0].suit} ? → \`?\``;
+        }
+
+        return [
+          `<@${id}> ${id === turn ? "◀" : ""} ${bust ? " Bust!" : ""}`,
+          str
+        ].join("\n");
+      };
 
       const embed = () => {
-        const displayHand = (p: Player, over?: boolean) => {
-          let str: string;
-          if (p.id === client.user.id) {
-            if (over) {
-              str = p.hand.map(c => `${c.value}${c.suit}`).join(" ");
-            } else {
-              str = p.hand
-                .map((c, i) => (i > 0 ? `?` : `${c.value}${c.suit}`))
-                .join(" | ");
-            }
-          } else {
-            str = p.hand.map(c => `${c.value}${c.suit}`).join(" ");
-          }
-          return str;
-        };
         return Utils.embed({
-          description: [
-            `${client.user}\n${displayHand(dealer)}`,
-            ...players.map(p => `<@${p.id}>\n${displayHand(p)}`)
-          ].join("\n\n")
+          description: players.map(p => displayHand(p)).join("\n\n")
         });
       };
 
-      await int.editReply({ embeds: [embed()] });
+      await int.editReply({ embeds: [embed()], components: [row] });
+
+      const skip = (
+        cl: InteractionCollector<ButtonInteraction<CacheType>>,
+        pi: number
+      ) => {
+        if (pi === players.length - 1) {
+          turn = players[0].id;
+          cl.stop();
+        } else {
+          turn = players[pi + 1].id;
+        }
+      };
+
+      cl.on("collect", async bint => {
+        await bint.deferUpdate();
+        let pi = players.findIndex(p => p.id === turn);
+        let p = players[pi];
+        switch (bint.customId) {
+          case customIds[0]: {
+            p.draw(deck);
+            p.sum();
+            if (p.bust) skip(cl, pi);
+            break;
+          }
+          case customIds[1]: {
+            skip(cl, pi);
+            break;
+          }
+        }
+        await int.editReply({ embeds: [embed()] });
+      });
+      cl.on("end", async () => {
+        await Utils.sleep(2e3);
+        await int.editReply({ embeds: [embed()], components: [] });
+
+        while (dealer.score < 17) {
+          dealer.draw(deck);
+          dealer.sum();
+          await Utils.sleep(2e3);
+          await int.editReply({ embeds: [embed()], components: [] });
+        }
+
+        await Utils.sleep(2e3);
+
+        let winnings = Math.ceil(bet * 1.5);
+        let wins = [];
+
+        for (let p of players) {
+          if (p.checkWin(dealer.score)) {
+            wins.push(p.id);
+            Utils.editChips(p.id, winnings);
+          }
+        }
+
+        let content = wins.length
+          ? wins
+              .map(
+                w =>
+                  `<@${w}> **won \`${winnings.toLocaleString()}\`** ${CHIPS_EMOJI}!`
+              )
+              .join("\n")
+          : "**No one won!**";
+
+        await int.editReply({ content });
+      });
     });
   }
 });
