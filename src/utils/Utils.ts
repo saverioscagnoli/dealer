@@ -3,6 +3,7 @@ import { Card, Dealer } from "../structs";
 import { DatabaseModel } from "../types";
 import { EMBED_COLOR } from "./consts";
 import { randomInt } from "crypto";
+import { Tables } from "../types";
 
 export abstract class Utils {
   public static rng(min: number, max: number) {
@@ -103,5 +104,22 @@ export abstract class Utils {
   public static async editLosses(id: string, n: number) {
     let data = await Utils.readDb(id);
     await Utils.writeDb(id, { ...data, losses: data.losses + n });
+  }
+
+  public static async addTable(k: Tables): Promise<number> {
+    let tables = await Dealer.tables.get(k);
+    if (!tables) {
+      await Dealer.tables.set(k, 1);
+      return 1;
+    } else {
+      let t = tables + 1;
+      await Dealer.tables.set(k, t);
+      return t;
+    }
+  }
+
+  public static async removeTable(k: Tables) {
+    let t = await Dealer.tables.get(k);
+    await Dealer.tables.set(k, t - 1);
   }
 }

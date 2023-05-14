@@ -9,7 +9,7 @@ import {
 } from "discord.js";
 import { SlashCommandT, Interaction as ExtendedInteraction } from "../types";
 import { QuickDB } from "quick.db";
-import { CDS_PATH, CHIPS_PATH, COMMANDS_DIR, Utils } from "../utils";
+import { CDS_PATH, CHIPS_PATH, COMMANDS_DIR, TABLES_PATH, Utils } from "../utils";
 import { SlashCommand } from "./SlashCommand";
 import { readdirSync } from "fs";
 
@@ -17,6 +17,7 @@ export class Dealer extends Client {
   public static commands: Collection<string, SlashCommandT> = new Collection();
   public static profData: QuickDB = new QuickDB({ filePath: CHIPS_PATH });
   public static cds: QuickDB = new QuickDB({ filePath: CDS_PATH });
+  public static tables: QuickDB = new QuickDB({ filePath: TABLES_PATH });
 
   constructor({ intents }) {
     super({ intents });

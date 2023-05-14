@@ -51,12 +51,15 @@ export default new SlashCommand({
     players[0].draw(deck);
     players[0].sum();
 
+    let t = await Utils.addTable("blackjack");
+
     const joinEmbed = () =>
       Utils.embed({
-        title: "Blackjack table!",
+        title: `Blackjack table no. \`${t.toLocaleString()}\`!`,
         description: `**-- Players --** \n${players
           .map(p => `<@${p.id}>`)
-          .join("\n")}`
+          .join("\n")}`,
+        footer: { text: `The bet is ${bet} chips!` }
       });
 
     await int.reply({ embeds: [joinEmbed()], components: [row] });
@@ -256,6 +259,7 @@ export default new SlashCommand({
           : "**No one won!**";
 
         await int.editReply({ content });
+        await Utils.removeTable("blackjack");
       });
     });
   }
