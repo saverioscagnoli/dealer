@@ -5,14 +5,12 @@ import { randomUUID } from "crypto";
 export class Horse {
   public name: string;
   public ownerId: string;
-  public ownerName: string;
   public progress: String[];
   public customId: string;
 
   constructor(name: string) {
     this.name = name;
     this.ownerId = null;
-    this.ownerName = null;
     this.progress = [this.getSprite()];
     this.customId = randomUUID();
   }
@@ -23,6 +21,5 @@ export class Horse {
 
   public setOwner(owner: User) {
     this.ownerId = owner.id;
-    this.ownerName = owner.username;
   }
 }

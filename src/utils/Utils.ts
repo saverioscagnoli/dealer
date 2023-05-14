@@ -1,5 +1,5 @@
 import { EmbedBuilder, EmbedData } from "discord.js";
-import { Dealer } from "../structs";
+import { Card, Dealer } from "../structs";
 import { DatabaseModel } from "../types";
 import { EMBED_COLOR } from "./consts";
 import { randomInt } from "crypto";
@@ -13,12 +13,55 @@ export abstract class Utils {
     return arr[Utils.rng(0, arr.length - 1)];
   }
 
+  public static shuffle<T>(arr: T[]) {
+    let ci = arr.length;
+    let rndi: number;
+    while (ci != 0) {
+      rndi = Math.floor(Math.random() * ci);
+      ci--;
+      [arr[ci], arr[rndi]] = [arr[rndi], arr[ci]];
+    }
+    return arr;
+  }
+
   public static sleep(ms: number) {
     return new Promise(res => setTimeout(res, ms));
   }
 
   public static embed(props: EmbedData) {
     return new EmbedBuilder({ ...props, color: EMBED_COLOR });
+  }
+
+  public static blackjackDeck() {
+    const suits = ["♠", "♥", "♦", "♣"];
+    const values = [
+      "A",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "J",
+      "Q",
+      "K"
+    ];
+    const numericValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
+    let deck: Card[] = [];
+    for (let i = 0; i < suits.length; i++) {
+      for (let j = 0; j < values.length; j++) {
+        let card = new Card({
+          suit: suits[i],
+          value: values[j],
+          numericValue: numericValues[j]
+        });
+        deck.push(card);
+      }
+    }
+    return Utils.shuffle(deck);
   }
 
   public static async validateBet(bet: number, chips: number, id?: string) {

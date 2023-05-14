@@ -24,10 +24,10 @@ export default new SlashCommand({
   ],
   exe: async ({ int, args, data }) => {
     let bet = args.getInteger("bet");
-    let isValid = await Utils.validateBet(bet, data.chips, int.user.id);
+    let msg = await Utils.validateBet(bet, data.chips, int.user.id);
 
-    if (typeof isValid === "string") {
-      await int.reply({ content: isValid, ephemeral: true });
+    if (typeof msg === "string") {
+      await int.reply({ content: msg, ephemeral: true });
       return;
     }
 
