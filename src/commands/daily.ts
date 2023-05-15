@@ -5,7 +5,7 @@ import { readdirSync } from "fs";
 
 export default new SlashCommand({
   name: "daily",
-  description: `Daily dose of chips!`,
+  description: "Daily dose of chips!",
   cd: 8.64e7,
   exe: async ({ int }) => {
     let n = Utils.rng(Utils.rng(7e3, 8e3), Utils.rng(9e3, 1.5e4));
