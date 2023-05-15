@@ -4,7 +4,6 @@ import { CHIPS_EMOJI, Utils } from "../utils";
 export default new SlashCommand({
   name: "balance",
   description: "Check your balance and stats.",
-  cd: 6e4,
   exe: async ({ int, data }) => {
     let { chips, wins, losses } = data;
     let ebd = Utils.embed({
