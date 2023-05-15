@@ -1,4 +1,4 @@
 export * from "./SlashCommandT";
 export * from "./DatabaseModel";
-export * from "./Tables";
+export * from "./TableType";
 export * from "./CooldownModel";
