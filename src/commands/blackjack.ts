@@ -245,7 +245,10 @@ export default new SlashCommand({
         for (let p of players) {
           if (p.checkWin(dealer.score)) {
             wins.push(p.id);
-            Utils.editChips(p.id, winnings);
+            await Utils.editChips(p.id, winnings);
+            await Utils.editWins(p.id);
+          } else {
+            await Utils.editLosses(p.id);
           }
         }
 

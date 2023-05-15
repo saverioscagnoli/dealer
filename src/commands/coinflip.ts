@@ -94,9 +94,9 @@ export default new SlashCommand({
 
       if (won) {
         await Utils.editChips(int.user.id, winnings);
-        await Utils.editWins(int.user.id, 1);
+        await Utils.editWins(int.user.id);
       } else {
-        await Utils.editLosses(int.user.id, 1);
+        await Utils.editLosses(int.user.id);
       }
     });
   }

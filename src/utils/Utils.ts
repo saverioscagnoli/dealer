@@ -96,14 +96,14 @@ export abstract class Utils {
     await Utils.writeDb(id, { ...data, chips: data.chips + n });
   }
 
-  public static async editWins(id: string, n: number) {
+  public static async editWins(id: string) {
     let data = await Utils.readDb(id);
-    await Utils.writeDb(id, { ...data, wins: data.wins + n });
+    await Utils.writeDb(id, { ...data, wins: data.wins + 1 });
   }
 
-  public static async editLosses(id: string, n: number) {
+  public static async editLosses(id: string) {
     let data = await Utils.readDb(id);
-    await Utils.writeDb(id, { ...data, losses: data.losses + n });
+    await Utils.writeDb(id, { ...data, losses: data.losses + 1 });
   }
 
   public static async addTable(k: Tables): Promise<number> {

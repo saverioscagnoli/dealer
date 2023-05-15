@@ -214,6 +214,7 @@ export default new SlashCommand({
       });
 
       for (let i = 0; i < winners.length; i++) {
+        await Utils.editWins(winners[i].ownerId);
         await Utils.editChips(winners[i].ownerId, winnings);
       }
     });
