@@ -1,5 +1,5 @@
 import { AttachmentBuilder } from "discord.js";
-import { SlashCommand } from "../structs";
+import { Dealer, SlashCommand } from "../structs";
 import { CHIPS_EMOJI, DAILY_IMG, Utils } from "../utils";
 import { readdirSync } from "fs";
 

@@ -1,6 +1,6 @@
 import { EmbedBuilder, EmbedData } from "discord.js";
 import { Card, Dealer } from "../structs";
-import { DatabaseModel } from "../types";
+import { CooldownModel, DatabaseModel } from "../types";
 import { EMBED_COLOR } from "./consts";
 import { randomInt } from "crypto";
 import { Tables } from "../types";
@@ -65,6 +65,17 @@ export abstract class Utils {
     return Utils.shuffle(deck);
   }
 
+  public static prettyMs(ms: number) {
+    let s = +(ms / 1000).toFixed(1);
+    let m = +(ms / (1000 * 60)).toFixed(1);
+    let h = +(ms / (1000 * 60 * 60)).toFixed(1);
+    let d = +(ms / (1000 * 60 * 60 * 24)).toFixed(1);
+    if (s < 60) return `\`${s}\` Seconds`;
+    else if (m < 60) return `\`${m}\` Minute(s)`;
+    else if (h < 24) return `\`${h}\` Hour(s)`;
+    else return `\`${d}\` Day(s)`;
+  }
+
   public static async validateBet(bet: number, chips: number, id?: string) {
     if (bet < 1) return "You can't bet less than 1 chip.";
     if (bet > chips) return "You can't bet more chips than you have.";
@@ -121,5 +132,24 @@ export abstract class Utils {
   public static async removeTable(k: Tables) {
     let t = await Dealer.tables.get(k);
     await Dealer.tables.set(k, t - 1);
+  }
+
+  public static async readCd(id: string): Promise<CooldownModel> {
+    let cds = await Dealer.cds.get(id);
+    if (!cds) {
+      cds = await Dealer.cds.set(id, {});
+    }
+    return cds;
+  }
+
+  public static async writeCd(
+    id: string,
+    cds: CooldownModel,
+    cmd: string,
+    cd: number
+  ) {
+    let newCds = { ...cds };
+    newCds[cmd] = Date.now() + cd;
+    await Dealer.cds.set(id, newCds);
   }
 }

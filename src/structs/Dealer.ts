@@ -9,7 +9,13 @@ import {
 } from "discord.js";
 import { SlashCommandT, Interaction as ExtendedInteraction } from "../types";
 import { QuickDB } from "quick.db";
-import { CDS_PATH, CHIPS_PATH, COMMANDS_DIR, TABLES_PATH, Utils } from "../utils";
+import {
+  CDS_PATH,
+  CHIPS_PATH,
+  COMMANDS_DIR,
+  TABLES_PATH,
+  Utils
+} from "../utils";
 import { SlashCommand } from "./SlashCommand";
 import { readdirSync } from "fs";
 
@@ -77,6 +83,23 @@ export class Dealer extends Client {
     if (!int.isCommand()) return;
     let cmd = Dealer.commands.get(int.commandName);
     if (!cmd) return;
+
+    if (cmd.cd) {
+      let cds = await Utils.readCd(int.user.id);
+      let until = cds[cmd.name];
+      let elapsedTime = until - Date.now();
+      if (!until || elapsedTime < 0) {
+        await Utils.writeCd(int.user.id, cds, cmd.name, cmd.cd);
+      } else {
+        await int.reply({
+          content: `You are on cooldown! Please wait ${Utils.prettyMs(
+            elapsedTime
+          )} before using this command again.`,
+          ephemeral: true
+        });
+        return;
+      }
+    }
 
     try {
       cmd.exe({
