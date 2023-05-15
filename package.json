@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.1.1",
+    "@types/node": "^20.1.4",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "tslib": "^2.5.0",
@@ -22,7 +22,6 @@
     "canvas": "^2.11.2",
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
-    "pretty-ms": "^8.0.0",
     "quick.db": "^9.1.6"
   }
 }
