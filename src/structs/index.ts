@@ -3,3 +3,4 @@ export * from "./SlashCommand";
 export * from "./Horse";
 export * from "./Card";
 export * from "./BlackjackPlayer";
+export * from "./RouletteNumber";
