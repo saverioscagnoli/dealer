@@ -84,7 +84,7 @@ export class Dealer extends Client {
     let cmd = Dealer.commands.get(int.commandName);
     if (!cmd) return;
 
-    /* if (cmd.cd) {
+    if (cmd.cd) {
       let cds = await Utils.readCd(int.user.id);
       let until = cds[cmd.name];
       let elapsedTime = until - Date.now();
@@ -99,7 +99,7 @@ export class Dealer extends Client {
         });
         return;
       }
-    } */
+    }
 
     try {
       cmd.exe({
