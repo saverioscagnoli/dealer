@@ -1,9 +1,17 @@
-import { Client } from "discord.js";
+import { Client } from "~/core/client";
 
-const client = new Client({ intents: ["Guilds"] });
+const client = Client.build({ intents: ["Guilds"] });
 
-client.on("ready", () => {
-  console.log("Bot is ready");
-});
+await client.init();
 
 client.login(process.env.TOKEN);
+
+process.on("unhandledRejection", err => {
+  console.error(err);
+});
+
+process.on("uncaughtException", err => {
+  console.error(err);
+});
+
+export { client };
