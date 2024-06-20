@@ -2,8 +2,14 @@ import type {
   ApplicationCommandOptionData,
   CommandInteraction
 } from "discord.js";
+import type { Profile } from "~/core/profile";
 
-type ExeFunction = (int: CommandInteraction) => Promise<void>;
+type ExeFunctionArgs = {
+  int: CommandInteraction;
+  profile: Profile;
+};
+
+type ExeFunction = (args: ExeFunctionArgs) => Promise<void>;
 
 class SlashCommand {
   public name: string;

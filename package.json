@@ -5,12 +5,16 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --compile --outfile dist/bot"
+    "build": "bun build src/index.ts --compile --outfile dist/bot",
+    "start:win": "./dist/bot.exe",
+    "prod:win": "bun run build && bun run start:win"
   },
   "dependencies": {
     "@discordjs/voice": "^0.17.0",
     "bufferutil": "^4.0.8",
     "discord.js": "^14.15.3",
+    "mongodb": "^6.7.0",
+    "mongoose": "^8.4.3",
     "utf-8-validate": "^6.0.4",
     "zlib-sync": "^0.1.9"
   },

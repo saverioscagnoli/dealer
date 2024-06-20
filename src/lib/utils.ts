@@ -2,24 +2,9 @@ import crypto from "crypto";
 
 /**
  * Formats a string template literal into a code block.
- *
- * @example
- * code`Hello, World!` -> `Hello, World!`
  */
-function code(strings: TemplateStringsArray, ...values: unknown[]) {
-  let output = [];
-
-  for (let i = 0; i < strings.length; i++) {
-    let [str, val] = [strings[i], values[i]];
-
-    output.push(str);
-
-    if (i < values.length) {
-      output.push(val);
-    }
-  }
-
-  return `\`${output.join("")}\``;
+function code(value: unknown) {
+  return `\`${value}\``;
 }
 
 /**
@@ -32,8 +17,19 @@ function code(strings: TemplateStringsArray, ...values: unknown[]) {
  * rng(1, 10) -> 10
  * rng(1, 10) -> 1
  */
-function rng(min: number, max: number) {
+function rng(min: number, max: number): number {
   return crypto.randomInt(min, max + 1);
 }
 
-export { code, rng };
+/**
+ * Flips a coin with a certain chance of success.
+ *
+ * @param chance The chance of the flip being successful
+ * @default 50
+ * @returns A boolean value based on the chance
+ */
+function flip(chance: number = 50): boolean {
+  return rng(1, 100) <= chance;
+}
+
+export { code, flip, rng };
