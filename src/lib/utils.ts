@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import type { CacheType, CommandInteraction } from "discord.js";
 
 /**
  * Formats a string template literal into a code block.
@@ -32,4 +33,38 @@ function flip(chance: number = 50): boolean {
   return rng(1, 100) <= chance;
 }
 
-export { code, flip, rng };
+/**
+ * Verifies if the user's bet is valid.
+ * @param bet The amount of chips the user wants to bet
+ * @param profileChips The amount of chips the user has
+ * @param int The interaction object
+ */
+async function verifyBet(
+  bet: number,
+  profileChips: number,
+  int: CommandInteraction<CacheType>
+): Promise<boolean> {
+  let replied = int.replied || int.deferred;
+
+  if (bet < 1) {
+    let msg = "You can't bet less than 1 chip!";
+
+    if (replied) await int.editReply(msg);
+    else await int.reply({ content: msg, ephemeral: true });
+
+    return false;
+  }
+
+  if (bet > profileChips) {
+    let msg = "You don't have enough chips to bet that much!";
+
+    if (replied) await int.editReply(msg);
+    else await int.reply({ content: msg, ephemeral: true });
+
+    return false;
+  }
+
+  return true;
+}
+
+export { code, flip, rng, verifyBet };

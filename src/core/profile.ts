@@ -26,8 +26,16 @@ class Profile {
     return this.wins;
   }
 
+  public async addWin(): Promise<void> {
+    await userSchema.updateOne({ id: this.getID() }, { $inc: { wins: 1 } });
+  }
+
   public getLosses(): number {
     return this.losses;
+  }
+
+  public async addLoss(): Promise<void> {
+    await userSchema.updateOne({ id: this.getID() }, { $inc: { losses: 1 } });
   }
 
   public getWinrate(): string {

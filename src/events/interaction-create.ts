@@ -52,10 +52,6 @@ export default new Event("interactionCreate", async int => {
       await int.editReply(
         "There was an error while executing the command. Please try again later."
       );
-
-      console.error(
-        `${int.user.username} used the ${int.commandName} command, but an error occurred: ${err}`
-      );
     } else {
       await int.reply({
         content:
@@ -63,5 +59,9 @@ export default new Event("interactionCreate", async int => {
         ephemeral: true
       });
     }
+
+    console.error(
+      `${int.user.username} used the ${int.commandName} command, but an error occurred: ${err}`
+    );
   }
 });

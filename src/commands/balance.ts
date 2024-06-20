@@ -13,7 +13,7 @@ export default new SlashCommand({
       .setTitle(`${int.user.displayName}'s balance`)
       .setDescription(
         [
-          `Chips: ${code(chips)}`,
+          `chips: ${code(chips)}`,
           `wins: ${code(profile.getWins())}`,
           `losses: ${code(profile.getLosses())}`,
           `winrate: ${code(profile.getWinrate())}`
