@@ -76,6 +76,7 @@ export default new SlashCommand({
       embed.setTitle(msg);
 
       await response.edit({ embeds: [embed] });
+
       if (win) {
         profile.addChips(bet);
         profile.addWin();
