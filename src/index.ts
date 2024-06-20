@@ -1,7 +1,9 @@
-import { IntentsBitField } from "discord.js";
-import { Dealer } from "./structs";
-import "dotenv/config";
+import { Client } from "discord.js";
 
-const { Guilds, GuildMessages } = IntentsBitField.Flags;
+const client = new Client({ intents: ["Guilds"] });
 
-const client = new Dealer({ intents: [Guilds, GuildMessages] });
+client.on("ready", () => {
+  console.log("Bot is ready");
+});
+
+client.login(process.env.TOKEN);
